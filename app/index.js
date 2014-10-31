@@ -138,8 +138,9 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
   // Scaffold project
   bower: function () {
-    var self = this,
-    bower = {
+    var self = this;
+
+    var bower = {
       name: self.projectName,
       version: self.projectVersion,
       homepage: self.gitRepository,
@@ -164,7 +165,12 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
     bower.dependencies.modernizr = 'latest';
 
-    self.template('bowerrc', '.bowerrc');
+    var bowerrc = {
+      'directory': 'app/src/assets/' + self.componentDir,
+      'interactive': false
+    };
+
+    self.write('.bowerrc', JSON.stringify(bowerrc, null, 2));
     self.write('bower.json', JSON.stringify(bower, null, 2));
   },
 
