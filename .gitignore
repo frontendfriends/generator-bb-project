@@ -10,3 +10,6 @@ tmp
 
 # Don't commit dependencies!
 node_modules
+
+# Generated files
+_combined.less
