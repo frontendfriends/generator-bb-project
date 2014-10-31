@@ -9,7 +9,7 @@
 
 # Don't commit dependencies!
 node_modules
-app/src/<%= componentDir %>
+<%= componentDir %>
 
 # Generated files
-app/dist
+dist
