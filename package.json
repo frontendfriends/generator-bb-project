@@ -1,0 +1,53 @@
+{
+  "name": "generator-bb-project",
+  "version": "0.1.0",
+  "description": "Generator for a base BB project",
+  "homepage": "https://github.com/frontendfriends/generator-bb-project",
+  "repository": "https://github.com/frontendfriends/generator-bb-project",
+  "issues": "https://waffle.io/frontendfriends/generator-bb-project",
+  "licenses": [
+    {
+        "type": "MIT",
+        "url": "http://building-blocks.mit-license.org"
+    }
+  ],
+  "author": {
+    "name": "Dan",
+    "email": "daniel@furzeface.com",
+    "url": "https://github.com/furzeface"
+  },
+  "main": "app/index.js",
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "test": "grunt travis"
+  },
+  "files": [
+    "app"
+  ],
+  "keywords": [
+    "yeoman-generator"
+  ],
+  "dependencies": {
+    "yeoman-generator": "^0.17.0",
+    "chalk": "^0.5.0",
+    "yosay": "^0.3.0"
+  },
+  "devDependencies": {
+    "grunt": "^0.4.x",
+    "grunt-contrib-jshint": "^0.10.0",
+    "grunt-contrib-watch": "^0.6.1",
+    "grunt-mocha-test": "^0.12.2",
+    "grunt-newer": "^0.8.0",
+    "grunt-notify": "^0.3.0",
+    "grunt-todo": "^0.4.0",
+    "jshint-stylish": "1.0.0",
+    "load-grunt-tasks": "^0.6.0",
+    "mocha": "*",
+    "time-grunt": "^1.0.0"
+  },
+  "peerDependencies": {
+    "yo": ">=1.0.0"
+  }
+}
