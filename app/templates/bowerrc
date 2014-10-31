@@ -1,3 +1,4 @@
 {
-  "directory": "app/src/<%= componentDir %>"
+  "directory": "app/src/<%= componentDir %>",
+   "interactive": false
 }

@@ -73,13 +73,6 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         default: 'no'
       },
       {
-        type: 'list',
-        name: 'includeModernizr',
-        message: 'And you\'re using Modernizr, right?',
-        choices: ['yes', 'no'],
-        default: 'yes'
-      },
-      {
         name: 'newJavaScriptModules',
         message: 'What empty JavaScript modules would you like created? (comma separate)',
         default: 'global'
@@ -124,7 +117,6 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       // Install
       self.componentDir = props.componentDir;
       self.supportLegacy = props.supportLegacy;
-      self.includeModernizr = props.includeModernizr;
       self.newJavaScriptModules = props.newJavaScriptModules.split(',');
       self.pages = props.pages.split(',');
 
@@ -170,9 +162,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       bower.dependencies.jquery = '~2.1.1';
     }
 
-    if (self.includeModernizr === 'yes') {
-      bower.dependencies.modernizr = 'latest';
-    }
+    bower.dependencies.modernizr = 'latest';
 
     self.template('bowerrc', '.bowerrc');
     self.write('bower.json', JSON.stringify(bower, null, 2));
