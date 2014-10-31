@@ -2,7 +2,7 @@
 
 var yeoman = require('yeoman-generator'),
 yosay = require('yosay'),
-slugify = require('slugify');
+slug = require('slug');
 
 var BbProjectGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -72,29 +72,29 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         choices: ['yes', 'no'],
         default: 'no'
       },
-      {
-        name: 'newJavaScriptModules',
-        message: 'What empty JavaScript modules would you like created? (comma separate)',
-        default: 'global'
-      },
-      {
-        type: 'checkbox',
-        name: 'javaScriptModules',
-        message: 'What prebuilt JavaScript modules would you like to include?',
-        choices: [
-        {
-          name: 'Menu',
-          value: 'includeMenu',
-          checked: true
-          // @todo Add moar of our prebuilt JS modules
-        }
-        ]
-      },
-      {
-        name: 'pages',
-        message: 'What empty pages would you like created? (comma separate)',
-        default: 'home,about,work'
-      }
+      // {
+      //   name: 'newJavaScriptModules',
+      //   message: 'What empty JavaScript modules would you like created? (comma separate)',
+      //   default: 'global'
+      // },
+      // {
+      //   type: 'checkbox',
+      //   name: 'javaScriptModules',
+      //   message: 'What prebuilt JavaScript modules would you like to include?',
+      //   choices: [
+      //   {
+      //     name: 'Menu',
+      //     value: 'includeMenu',
+      //     checked: true
+      //     // @todo Add moar of our prebuilt JS modules
+      //   }
+      //   ]
+      // },
+      // {
+      //   name: 'pages',
+      //   message: 'What empty pages would you like created? (comma separate)',
+      //   default: 'home,about,work'
+      // }
       ];
 
       this.prompt(prompts, function (props) {
@@ -105,7 +105,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       self.yourGitUser = props.yourGitUser;
 
       // Project
-      self.projectName = slugify(props.projectName);
+      self.projectName = slug(props.projectName);
       self.projectVersion = props.projectVersion;
 
       if (props.gitRepository === 'Bitbucket') {
@@ -117,17 +117,17 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       // Install
       self.componentDir = props.componentDir;
       self.supportLegacy = props.supportLegacy;
-      self.newJavaScriptModules = props.newJavaScriptModules.split(',');
-      self.pages = props.pages.split(',');
+      // self.newJavaScriptModules = props.newJavaScriptModules.split(',');
+      // self.pages = props.pages.split(',');
 
-      var javaScriptModules = props.javaScriptModules;
+      // var javaScriptModules = props.javaScriptModules;
 
-      function hasFeature (feat) {
-        return javaScriptModules && javaScriptModules.indexOf(feat) !== -1;
-      }
+      // function hasFeature (feat) {
+      //   return javaScriptModules && javaScriptModules.indexOf(feat) !== -1;
+      // }
 
-      self.includeGlobal = hasFeature('includeGlobal');
-      self.includeMenu = hasFeature('includeMenu');
+      // self.includeGlobal = hasFeature('includeGlobal');
+      // self.includeMenu = hasFeature('includeMenu');
 
       // Misc details
       self.currentYear = new Date().getFullYear();
@@ -265,15 +265,16 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   // Callbacks for after scaffolding
   end: function () {
     this.installDependencies({
-      // Call grunt build_dev after dependencies have been installed
       callback: function () {
 
         this.log(yosay(
           'All done! Now running grunt to kick start the project.'
           ));
 
-        this.spawnCommand('grunt', ['build_dev']);
-        this.spawnCommand('grunt', ['build_docs']);
+        // Call grunt to build after dependencies have been installed
+        this.spawnCommand('grunt', ['build_dev', 'build_docs']);
+        // Open the directory
+        this.spawnCommand('open', ['.']);
       }.bind(this)
     });
   }
