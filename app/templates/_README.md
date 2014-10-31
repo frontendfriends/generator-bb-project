@@ -1,0 +1,3 @@
+# <%= projectName %> · v<%= projectVersion %>
+
+> <%= projectName %>

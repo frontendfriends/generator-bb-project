@@ -1,7 +1,8 @@
 'use strict';
 
 var yeoman = require('yeoman-generator'),
-yosay = require('yosay');
+yosay = require('yosay'),
+slugify = require('slugify');
 
 var BbProjectGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -51,25 +52,25 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         message: 'What version of the project is this?',
         default: '0.1.0'
       },
+      {
+        type: 'list',
+        name: 'gitRepository',
+        message: 'Where will the codebase be stored?',
+        choices: ['Bitbucket', 'GitHub'],
+        default: 'Bitbucket'
+      },
       // Install details
       {
         name: 'componentDir',
         message: 'Where do you want Bower components installed?',
-        default: 'components'
+        default: 'bower_components'
       },
       {
         type: 'list',
         name: 'supportLegacy',
-        message: 'Do you need to support legacy IE versions?',
+        message: 'Do you need to support IE 8?',
         choices: ['yes', 'no'],
         default: 'no'
-      },
-      {
-        type: 'list',
-        name: 'includeLess',
-        message: 'Do you want to include our Less modules?',
-        choices: ['yes', 'no'],
-        default: 'yes'
       },
       {
         type: 'list',
@@ -92,18 +93,18 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
           name: 'Menu',
           value: 'includeMenu',
           checked: true
-            // @todo Add moar of our prebuilt JS modules
-          }
-          ]
-        },
-        {
-          name: 'pages',
-          message: 'What empty pages would you like created? (comma separate)',
-          default: 'home,about,work'
+          // @todo Add moar of our prebuilt JS modules
         }
-        ];
+        ]
+      },
+      {
+        name: 'pages',
+        message: 'What empty pages would you like created? (comma separate)',
+        default: 'home,about,work'
+      }
+      ];
 
-        this.prompt(prompts, function (props) {
+      this.prompt(prompts, function (props) {
       // Personal
       self.yourName = props.yourName;
       self.yourEmail = props.yourEmail;
@@ -111,13 +112,18 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       self.yourGitUser = props.yourGitUser;
 
       // Project
-      self.projectName = props.projectName;
+      self.projectName = slugify(props.projectName);
       self.projectVersion = props.projectVersion;
+
+      if (props.gitRepository === 'Bitbucket') {
+        self.gitRepository = 'https://bitbucket.org/buildingblocks/' + self.projectName;
+      } else if (props.gitRepository === 'GitHub') {
+        self.gitRepository = 'https://github.com/buildingblocks/' + self.projectName;
+      }
 
       // Install
       self.componentDir = props.componentDir;
       self.supportLegacy = props.supportLegacy;
-      self.includeLess = props.includeLess;
       self.includeModernizr = props.includeModernizr;
       self.newJavaScriptModules = props.newJavaScriptModules.split(',');
       self.pages = props.pages.split(',');
@@ -130,32 +136,67 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
       self.includeGlobal = hasFeature('includeGlobal');
       self.includeMenu = hasFeature('includeMenu');
-      console.log('blah');
+
       // Misc details
       self.currentYear = new Date().getFullYear();
 
       done();
     }.bind(this));
-},
-
-writing: {
-  app: function () {
-    this.dest.mkdir('app');
-    this.dest.mkdir('app/templates');
-
-    this.src.copy('_package.json', 'package.json');
-    this.src.copy('_bower.json', 'bower.json');
   },
 
-  projectfiles: function () {
-    this.src.copy('editorconfig', '.editorconfig');
-    this.src.copy('jshintrc', '.jshintrc');
-  }
-},
+  // Scaffold project
+  bower: function () {
+    var self = this,
+    bower = {
+      name: self.projectName,
+      version: self.projectVersion,
+      homepage: self.gitRepository,
+      authors: [
+      self.yourName + ' (' + self.yourUrl + ')'
+      ],
+      private: true,
+      license: 'MIT',
+      ignore: [
+        '**/.*',
+        'node_modules',
+        self.componentDir
+      ],
+      dependencies: {}
+    };
 
-end: function () {
-  this.installDependencies();
-}
+    if (self.supportLegacy === 'yes') {
+      bower.dependencies.jquery = '~1.11.1';
+    } else {
+      bower.dependencies.jquery = '~2.1.1';
+    }
+
+    if (self.includeModernizr === 'yes') {
+      bower.dependencies.modernizr = 'latest';
+    }
+
+    self.template('bowerrc', '.bowerrc');
+    self.write('bower.json', JSON.stringify(bower, null, 2));
+  },
+
+  package: function () {
+    var self = this;
+
+    self.template('_package.json', 'package.json');
+  },
+
+  projectMeta: function () {
+    var self = this;
+
+    self.template('_site.sublime-project', '_<%= projectName %>.sublime-project');
+    self.src.copy('editorconfig', '.editorconfig');
+    self.template('gitignore', '.gitignore');
+    self.template('_AUTHORS.md', 'AUTHORS.md');
+    self.template('_README.md', 'README.md');
+  },
+
+  end: function () {
+    this.installDependencies();
+  }
 });
 
 module.exports = BbProjectGenerator;

@@ -9,7 +9,7 @@ module.exports = function(grunt) {
   /* jshint camelcase: false */
 
   // Reads package.json and dynamically loads all Grunt tasks
-  require('load-grunt-tasks')(grunt, {scope: 'devDependencies', pattern: ['assemble', 'grunt-*']});
+  require('load-grunt-tasks')(grunt, {scope: 'devDependencies', pattern: ['grunt-*']});
 
   // Time all of the things
   require('time-grunt')(grunt);
