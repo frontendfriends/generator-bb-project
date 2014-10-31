@@ -180,8 +180,36 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.template('_site.sublime-project', '_<%= projectName %>.sublime-project');
     self.src.copy('editorconfig', '.editorconfig');
     self.template('gitignore', '.gitignore');
+    self.template('gitattributes', '.gitattributes');
     self.template('_AUTHORS.md', 'AUTHORS.md');
     self.template('_README.md', 'README.md');
+  },
+
+  directories: function () {
+    var self = this;
+
+    self.dest.mkdir('app/src/assets');
+    self.dest.mkdir('app/src/_bb');
+    self.dest.mkdir('app/src/fonts');
+    self.dest.mkdir('app/src/images');
+    self.dest.mkdir('app/src/assets/scripts');
+    self.dest.mkdir('app/src/assets/styles');
+    self.dest.mkdir('app/src/assets/temp');
+    self.dest.mkdir('app/src/assets/templates');
+
+    self.dest.mkdir('app/src/data');
+    self.dest.mkdir('app/src/helpers');
+    self.dest.mkdir('app/src/layouts');
+    self.dest.mkdir('app/src/pages');
+    self.dest.mkdir('app/src/partials');
+  },
+
+  scripts: function () {
+    var self = this;
+
+    self.src.copy('jscsrc', '.jscsrc');
+    self.src.copy('jsdoc.conf.json', '.jsdoc.conf.json');
+    self.src.copy('jshintrc', '.jshintrc');
   },
 
   end: function () {
