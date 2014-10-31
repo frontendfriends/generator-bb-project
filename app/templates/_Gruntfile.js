@@ -241,7 +241,7 @@ module.exports = function(grunt) {
         ieCss: '<%= config.ieCss %>',
         ieRtlCss: '<%= config.ieRtlCss %>',
         data: [
-        '<%= config.src %>/data/*.{json,yml}',
+        '<%= config.src %>/data/*.json',
         'package.json',
         ],
         timestamp: '<%= grunt.template.today("mmm dS yyyy, h:MMtt Z") %>'
@@ -578,7 +578,7 @@ module.exports = function(grunt) {
   // Build tasks.
   grunt.registerTask('build_html', [
     'clean:html',
-    // 'assemble',
+    'assemble',
     'copy:assets'
     ]);
 

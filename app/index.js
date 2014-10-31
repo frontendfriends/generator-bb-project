@@ -221,7 +221,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     var self = this;
 
     self.src.copy('jscsrc', '.jscsrc');
-    self.src.copy('jsdoc.conf.json', '.jsdoc.conf.json');
+    self.template('jsdoc.conf.json', '.jsdoc.conf.json');
     self.src.copy('jshintrc', '.jshintrc');
     self.directory('assets/scripts/', 'app/src/assets/scripts/');
   },
@@ -259,7 +259,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   partials: function () {
     var self = this;
 
-    self.directory('assets/partials/', 'app/src/assets/partials/');
+    self.directory('partials/', 'app/src/partials/');
   },
 
   // Callbacks for after scaffolding
@@ -269,10 +269,11 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       callback: function () {
 
         this.log(yosay(
-          'All done! Now running grunt dev to kick start the project.'
+          'All done! Now running grunt to kick start the project.'
           ));
 
-        this.spawnCommand('grunt', ['dev']);
+        this.spawnCommand('grunt', ['build_dev']);
+        this.spawnCommand('grunt', ['build_docs']);
       }.bind(this)
     });
   }
