@@ -134,7 +134,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
       done();
     }.bind(this));
-  },
+},
 
   // Scaffold project
   bower: function () {
@@ -150,9 +150,9 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       private: true,
       license: 'MIT',
       ignore: [
-        '**/.*',
-        'node_modules',
-        self.componentDir
+      '**/.*',
+      'node_modules',
+      self.componentDir
       ],
       dependencies: {}
     };
@@ -191,23 +191,30 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.template('_README.md', 'README.md');
   },
 
+  gruntfile: function () {
+    var self = this;
+
+    self.src.copy('_Gruntfile.js', 'Gruntfile.js');
+  },
+
   directories: function () {
     var self = this;
 
-    self.dest.mkdir('app/src/assets');
-    self.dest.mkdir('app/src/_bb');
-    self.dest.mkdir('app/src/fonts');
-    self.dest.mkdir('app/src/images');
-    self.dest.mkdir('app/src/assets/scripts');
-    self.dest.mkdir('app/src/assets/styles');
+    self.dest.mkdir('app/src/assets/fonts');
     self.dest.mkdir('app/src/assets/temp');
     self.dest.mkdir('app/src/assets/templates');
+  },
 
-    self.dest.mkdir('app/src/data');
-    self.dest.mkdir('app/src/helpers');
-    self.dest.mkdir('app/src/layouts');
-    self.dest.mkdir('app/src/pages');
-    self.dest.mkdir('app/src/partials');
+  bb: function () {
+    var self = this;
+
+    self.directory('assets/_bb/', 'app/src/assets/_bb/');
+  },
+
+  images: function () {
+    var self = this;
+
+    self.directory('assets/images/', 'app/src/assets/images/');
   },
 
   scripts: function () {
@@ -216,10 +223,58 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.src.copy('jscsrc', '.jscsrc');
     self.src.copy('jsdoc.conf.json', '.jsdoc.conf.json');
     self.src.copy('jshintrc', '.jshintrc');
+    self.directory('assets/scripts/', 'app/src/assets/scripts/');
   },
 
+  styles: function () {
+    var self = this;
+
+    self.directory('assets/styles/', 'app/src/assets/styles/');
+  },
+
+  data: function () {
+    var self = this;
+
+    self.directory('data/', 'app/src/data/');
+  },
+
+  helpers: function () {
+    var self = this;
+
+    self.directory('helpers/', 'app/src/helpers/');
+  },
+
+  layouts: function () {
+    var self = this;
+
+    self.directory('layouts/', 'app/src/layouts/');
+  },
+
+  pages: function () {
+    var self = this;
+
+    self.directory('pages/', 'app/src/pages/');
+  },
+
+  partials: function () {
+    var self = this;
+
+    self.directory('assets/partials/', 'app/src/assets/partials/');
+  },
+
+  // Callbacks for after scaffolding
   end: function () {
-    this.installDependencies();
+    this.installDependencies({
+      // Call grunt build_dev after dependencies have been installed
+      callback: function () {
+
+        this.log(yosay(
+          'All done! Now running grunt dev to kick start the project.'
+          ));
+
+        this.spawnCommand('grunt', ['dev']);
+      }.bind(this)
+    });
   }
 });
 
