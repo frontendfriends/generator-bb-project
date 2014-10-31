@@ -4,4 +4,3 @@ node_js:
 before_install:
   - currentfolder=${PWD##*/}
   - if [ "$currentfolder" != 'generator-bb-project' ]; then cd .. && eval "mv $currentfolder generator-bb-project" && cd generator-bb-project; fi
-
