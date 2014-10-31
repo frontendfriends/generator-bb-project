@@ -77,6 +77,7 @@ module.exports = function(grunt) {
       },
       all: [
         '<%= config.app %>/**/*.{js,hbs,txt}',
+        '<%= config.test %>/**/*.js',
         '<%= config.gruntfile %>'
       ]
     },

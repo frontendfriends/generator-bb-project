@@ -72,11 +72,11 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         choices: ['yes', 'no'],
         default: 'no'
       },
-      // {
-      //   name: 'newJavaScriptModules',
-      //   message: 'What empty JavaScript modules would you like created? (comma separate)',
-      //   default: 'global'
-      // },
+      {
+        name: 'newJavaScriptModules',
+        message: 'What empty JavaScript modules would you like created? (comma separate)',
+        default: 'global'
+      },
       // {
       //   type: 'checkbox',
       //   name: 'javaScriptModules',
@@ -117,7 +117,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       // Install
       self.componentDir = props.componentDir;
       self.supportLegacy = props.supportLegacy;
-      // self.newJavaScriptModules = props.newJavaScriptModules.split(',');
+      self.newJavaScriptModules = props.newJavaScriptModules.split(',');
       // self.pages = props.pages.split(',');
 
       // var javaScriptModules = props.javaScriptModules;
@@ -224,6 +224,12 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.template('jsdoc.conf.json', '.jsdoc.conf.json');
     self.src.copy('jshintrc', '.jshintrc');
     self.directory('assets/scripts/', 'app/src/assets/scripts/');
+
+    // Create modules for each item from the user defined list
+    self.newJavaScriptModules.forEach(function (module) {
+      self.moduleName = module;
+      self.template('_module.js', 'app/src/assets/scripts/modules/combine/' + module + '.js');
+    });
   },
 
   styles: function () {

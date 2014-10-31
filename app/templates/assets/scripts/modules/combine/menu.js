@@ -12,8 +12,8 @@
     */
     menu: {
       $handle : null,
-      menuInClass : 'menu-in',
-      init : function () {
+      menuInClass: 'menu-in',
+      init: function () {
         var self = this;
         self.$handle = $('.action-menu');
         self.$handle.on('click.menu', function (event) {
@@ -25,11 +25,11 @@
           }
         });
       },
-      openMenu : function () {
+      openMenu: function () {
         var self = this;
         self.bb.settings.$html.addClass(self.menuInClass);
       },
-      closeMenu : function () {
+      closeMenu: function () {
         var self = this;
         self.bb.settings.$html.removeClass(self.menuInClass);
       }

@@ -19,6 +19,7 @@ describe('bb-project:app', function () {
 
   it('creates files', function () {
     assert.file([
+      // @todo Add more files to test
       '.bowerrc',
       'bower.json',
       'package.json',

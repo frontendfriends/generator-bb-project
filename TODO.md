@@ -10,7 +10,11 @@
 
 ## app/index.js
 
--  **todo** `(line 95)`  Add moar of our prebuilt JS modules
+-  **todo** `(line 89)`  Add moar of our prebuilt JS modules
+
+## test/test-app.js
+
+-  **todo** `(line 22)`  Add more files to test
 
 ## Gruntfile.js
 
@@ -19,4 +23,4 @@
 
 * * *
 
-Last generated: Fri Oct 31 2014 08:43:35 by [grunt-todo](https://github.com/leny/grunt-todo).
+Last generated: Fri Oct 31 2014 14:58:35 by [grunt-todo](https://github.com/leny/grunt-todo).
