@@ -48,7 +48,7 @@ Tips:
 * Versioning adheres to [Semver](http://semver.org)
 
 ## Release History
-_nothing yet_
+- 2014-10-31 v0.1.0 - Initial release.
 
 ## License
 [MIT License](http://building-blocks.mit-license.org)
