@@ -10,7 +10,7 @@
 
 ## app/index.js
 
--  **todo** `(line 89)`  Add moar of our prebuilt JS modules
+-  **todo** `(line 93)`  Add options to include our prebuilt JS modules
 
 ## test/test-app.js
 
@@ -23,4 +23,4 @@
 
 * * *
 
-Last generated: Fri Oct 31 2014 14:58:35 by [grunt-todo](https://github.com/leny/grunt-todo).
+Last generated: Mon Nov 03 2014 10:28:27 by [grunt-todo](https://github.com/leny/grunt-todo).

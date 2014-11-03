@@ -24,7 +24,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       // Personal details
       {
         name: 'yourName',
-        message: 'First a bit about you. What is your name?',
+        message: 'What is your name?',
         default: 'Building Blocks'
       },
       {
@@ -73,28 +73,30 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         default: 'no'
       },
       {
+        type: 'list',
+        name: 'useModernizr',
+        message: 'And you\'re including Modernizr, right?',
+        choices: ['yes', 'no'],
+        default: 'yes'
+      },
+      // Project scaffold details
+      {
         name: 'newJavaScriptModules',
         message: 'What empty JavaScript modules would you like created? (comma separate)',
         default: 'global'
       },
-      // {
-      //   type: 'checkbox',
-      //   name: 'javaScriptModules',
-      //   message: 'What prebuilt JavaScript modules would you like to include?',
-      //   choices: [
-      //   {
-      //     name: 'Menu',
-      //     value: 'includeMenu',
-      //     checked: true
-      //     // @todo Add moar of our prebuilt JS modules
-      //   }
-      //   ]
-      // },
-      // {
-      //   name: 'pages',
-      //   message: 'What empty pages would you like created? (comma separate)',
-      //   default: 'home,about,work'
-      // }
+      {
+        name: 'newPages',
+        message: 'What empty pages would you like created? (comma separate)',
+        default: 'home'
+      },
+      // @todo Add options to include our prebuilt JS modules
+      {
+        name: 'openProject',
+        message: 'Do you want to open the project after generation?',
+        choices: ['yes', 'no'],
+        default: 'yes'
+      }
       ];
 
       this.prompt(prompts, function (props) {
@@ -116,20 +118,15 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
       // Install
       self.componentDir = props.componentDir;
-      self.supportLegacy = props.supportLegacy;
+      self.supportLegacy = (props.supportLegacy === 'yes');
+      self.useModernizr = (props.useModernizr === 'yes');
+
+      // Project scaffold
       self.newJavaScriptModules = props.newJavaScriptModules.split(',');
-      // self.pages = props.pages.split(',');
-
-      // var javaScriptModules = props.javaScriptModules;
-
-      // function hasFeature (feat) {
-      //   return javaScriptModules && javaScriptModules.indexOf(feat) !== -1;
-      // }
-
-      // self.includeGlobal = hasFeature('includeGlobal');
-      // self.includeMenu = hasFeature('includeMenu');
+      self.newPages = props.newPages.split(',');
 
       // Misc details
+      self.openProject = (props.openProject === 'yes');
       self.currentYear = new Date().getFullYear();
 
       done();
@@ -137,8 +134,25 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 },
 
   // Scaffold project
+  projectMeta: function () {
+    var self = this;
+
+    self.template('_site.sublime-project', '_<%= projectName %>.sublime-project');
+    self.src.copy('editorconfig', '.editorconfig');
+    self.template('gitignore', '.gitignore');
+    self.template('gitattributes', '.gitattributes');
+    self.template('_AUTHORS.md', 'AUTHORS.md');
+    self.template('_README.md', 'README.md');
+  },
+
   bower: function () {
     var self = this;
+
+    var bowerrc = {
+      'directory': 'app/src/assets/' + self.componentDir,
+      'private': true,
+      'interactive': false
+    };
 
     var bower = {
       name: self.projectName,
@@ -157,18 +171,15 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       dependencies: {}
     };
 
-    if (self.supportLegacy === 'yes') {
+    if (self.supportLegacy) {
       bower.dependencies.jquery = '~1.11.1';
     } else {
       bower.dependencies.jquery = '~2.1.1';
     }
 
-    bower.dependencies.modernizr = 'latest';
-
-    var bowerrc = {
-      'directory': 'app/src/assets/' + self.componentDir,
-      'interactive': false
-    };
+    if (self.useModernizr) {
+      bower.dependencies.modernizr = 'latest';
+    }
 
     self.write('.bowerrc', JSON.stringify(bowerrc, null, 2));
     self.write('bower.json', JSON.stringify(bower, null, 2));
@@ -178,17 +189,6 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     var self = this;
 
     self.template('_package.json', 'package.json');
-  },
-
-  projectMeta: function () {
-    var self = this;
-
-    self.template('_site.sublime-project', '_<%= projectName %>.sublime-project');
-    self.src.copy('editorconfig', '.editorconfig');
-    self.template('gitignore', '.gitignore');
-    self.template('gitattributes', '.gitattributes');
-    self.template('_AUTHORS.md', 'AUTHORS.md');
-    self.template('_README.md', 'README.md');
   },
 
   gruntfile: function () {
@@ -257,9 +257,29 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   },
 
   pages: function () {
-    var self = this;
+    var self = this,
+    navigationJson = [];
 
+    // Copy all existing pages over
     self.directory('pages/', 'app/src/pages/');
+
+    // Create page template for each item from the user defined list
+    self.newPages.forEach(function (page) {
+      // Variable to pass into scaffolding
+      self.newPageName = page;
+
+      // Build navigation.json
+      navigationJson.push({
+        'title': page,
+        'url': page,
+        'id': page + '-page'
+      });
+
+      self.template('_page.hbs', 'app/src/pages/' + self.newPageName + '.hbs');
+    });
+
+
+    self.write('app/src/data/navigation.json', JSON.stringify(navigationJson, null, 2));
   },
 
   partials: function () {
@@ -270,7 +290,9 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
   // Callbacks for after scaffolding
   end: function () {
-    this.installDependencies({
+    var self = this;
+
+    self.installDependencies({
       callback: function () {
 
         this.log(yosay(
@@ -279,8 +301,11 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
         // Call grunt to build after dependencies have been installed
         this.spawnCommand('grunt', ['build_dev', 'build_docs']);
-        // Open the directory
-        this.spawnCommand('open', ['.']);
+
+        if (self.openProject) {
+          // Open the directory and Sublime project
+          this.spawnCommand('open', ['.', '_' + self.projectName + '.sublime-project']);
+        }
       }.bind(this)
     });
   }

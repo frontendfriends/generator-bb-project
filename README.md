@@ -1,6 +1,5 @@
 # generator-bb-project
 [![NPM Version][npm-image]][npm-url]
-[![Build Status][travis-image]][travis-url]
 
 > [Yeoman](http://yeoman.io) generator for a shiny new BB Project
 
@@ -48,6 +47,7 @@ Tips:
 * Versioning adheres to [Semver](http://semver.org)
 
 ## Release History
+- 2014-11-03 v0.2.0 - Adds support for page/navigation scaffolding. Adds support for optionally including Modernizr.
 - 2014-10-31 v0.1.0 - Initial release.
 
 ## License

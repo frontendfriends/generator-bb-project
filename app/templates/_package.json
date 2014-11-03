@@ -1,6 +1,7 @@
 {
   "name": "<%= projectName %>",
   "version": "<%= projectVersion %>",
+  "private": true,
   "title": "<%= projectName %>",
   "description": "<%= projectName %>",
   "homepage": "<%= gitRepository %>",
@@ -34,7 +35,9 @@
     "grunt-dev-update": "^0.9.0",
     "grunt-jscs": "^0.7.1",
     "grunt-jsdoc": "^0.5.7",
+    <% if (useModernizr) { %>
     "grunt-modernizr": "0.6.0",
+    <% } %>
     "grunt-newer": "^0.7.0",
     "grunt-notify": "^0.3.0",
     "grunt-prettify": "~0.3.4",
