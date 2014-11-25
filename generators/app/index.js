@@ -8,7 +8,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   initializing: function () {
     var self = this;
 
-    self.pkg = require('../package.json');
+    self.pkg = require('../../package.json');
   },
 
   prompting: function () {
