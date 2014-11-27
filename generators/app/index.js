@@ -1,8 +1,9 @@
-'use strict';
+s'use strict';
 
 var yeoman = require('yeoman-generator'),
 yosay = require('yosay'),
-slug = require('slug');
+slug = require('slug'),
+changeCase = require('change-case');
 
 var BbProjectGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -227,7 +228,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
     // Create modules for each item from the user defined list
     self.newJavaScriptModules.forEach(function (module) {
-      self.moduleName = module;
+      self.moduleName = changeCase.camelCase(module);
       self.template('_module.js', 'app/src/assets/scripts/modules/combine/' + module + '.js');
     });
   },
