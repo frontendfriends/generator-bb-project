@@ -112,8 +112,8 @@ module.exports = function(grunt) {
 
   // Task aliases.
   grunt.registerTask('build_app', [
-    'newer:jshint:app',
-    'newer:mochaTest'
+    'newer:jshint:app'/*,
+    'newer:mochaTest'*/
   ]);
 
 

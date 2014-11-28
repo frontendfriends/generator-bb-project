@@ -36,8 +36,6 @@ module.exports = function(grunt) {
       distTemp: 'temp',
       distImages: 'images',
       distFonts: 'fonts',
-      distDocs: 'docs',
-      distJsDocs: 'jsdocs',
       // misc settings
       pagePrefix: '<%= pkg.name %>_',
       partialPrefix: '<%= pkg.name %>_partial-',
@@ -295,22 +293,6 @@ module.exports = function(grunt) {
       }
     },
 
-
-    // Docs build tasks
-    jsdoc: {
-      all: {
-        src: [
-        '<%= config.gruntfile %>',
-        '<%= config.src %>/<%= config.srcAssets %>/<%= config.srcScripts %>/modules/combine/*.js',
-        '<%= config.src %>/<%= config.helpers %>/helper-*.js'
-        ],
-        options: {
-          destination: '<%= config.dist %>/<%= config.distDocs %>/<%= config.distJsDocs %>',
-          template: 'node_modules/grunt-jsdoc/node_modules/ink-docstrap/template',
-          configure: '.jsdoc.conf.json'
-        }
-      }
-    },
 
     // Script tasks
     jshint: {
@@ -604,10 +586,6 @@ module.exports = function(grunt) {
     'copy:scripts'
     ]);
 
-  grunt.registerTask('build_docs', [
-    'jsdoc'
-    ]);
-
   grunt.registerTask('build_dev', [
     'build_html',
     'build_scripts',
@@ -622,7 +600,6 @@ module.exports = function(grunt) {
     'cssmin',
     'uglify',
     'prettify',
-    'build_docs',
     'clean:production'
     ]);
 
@@ -630,15 +607,12 @@ module.exports = function(grunt) {
   grunt.registerTask('default', [
     'clean:everything',
     'build_dev',
-    'build_docs',
     'watch'
     ]);
 
-  // Local server.
   grunt.registerTask('server', [
     'clean:everything',
     'build_dev',
-    'build_docs',
     'connect',
     'watch'
     ]);

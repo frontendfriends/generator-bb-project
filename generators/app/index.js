@@ -1,4 +1,4 @@
-s'use strict';
+'use strict';
 
 var yeoman = require('yeoman-generator'),
 yosay = require('yosay'),
@@ -189,11 +189,15 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   package: function () {
     var self = this;
 
+    // @todo: scaffold package
+
     self.template('_package.json', 'package.json');
   },
 
   gruntfile: function () {
     var self = this;
+
+    // @todo: scaffold gruntfile
 
     self.src.copy('_Gruntfile.js', 'Gruntfile.js');
   },

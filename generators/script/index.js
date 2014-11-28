@@ -59,6 +59,8 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       // Project scaffold
       self.newJavaScriptModules = props.newJavaScriptModules.split(',');
 
+      // @todo optional subscribe events
+
       done();
     }.bind(this));
     },
