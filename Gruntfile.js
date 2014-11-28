@@ -22,6 +22,7 @@ module.exports = function(grunt) {
       // @todo Use banner for index.js on build
     },
     config: {
+      generators: 'generators',
       app: 'app',
       test: 'test',
       index: 'index.js',
@@ -76,7 +77,7 @@ module.exports = function(grunt) {
           usePackage: true
       },
       all: [
-        '<%= config.app %>/**/*.{js,hbs,txt}',
+        '<%= config.generators %>/**/*.{js,hbs,txt}',
         '<%= config.test %>/**/*.js',
         '<%= config.gruntfile %>'
       ]

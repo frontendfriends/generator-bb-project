@@ -1,6 +1,6 @@
 # [[ TODO list:](https://github.com/frontendfriends/generator-bb-project)]( https://github.com/frontendfriends/generator-bb-project )
 
-**Version:** `0.1.0`
+**Version:** `0.2.0`
 
 > Generator for a base BB project
 
@@ -8,9 +8,20 @@
 
 ## TODO
 
-## app/index.js
+## generators/app/index.js
 
--  **todo** `(line 93)`  Add options to include our prebuilt JS modules
+-  **todo** `(line 94)`  Add options to include our prebuilt JS modules
+-  **todo** `(line 193)` : scaffold package
+-  **todo** `(line 201)` : scaffold gruntfile
+-  **todo** `(line 235)`  Invoke sub generator and remove duplication remove duplication
+
+## generators/app/templates/_Gruntfile.js
+
+-  **todo** `(line 561)`  Run grunt setup after NPM i
+
+## generators/script/index.js
+
+-  **todo** `(line 62)`  optional subscribe events
 
 ## test/test-app.js
 
@@ -23,4 +34,4 @@
 
 * * *
 
-Last generated: Mon Nov 03 2014 10:28:27 by [grunt-todo](https://github.com/leny/grunt-todo).
+Last generated: Fri Nov 28 2014 13:30:49 by [grunt-todo](https://github.com/leny/grunt-todo).

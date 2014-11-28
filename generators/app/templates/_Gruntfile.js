@@ -557,6 +557,13 @@ module.exports = function(grunt) {
     }
   });
 
+  // Setup task ran after Yeoman generator
+  // @todo Run grunt setup after NPM i
+  grunt.registerTask('setup', [
+    'copy:normalize',
+    'build_dev'
+    ]);
+
   // Build tasks.
   grunt.registerTask('build_html', [
     'clean:html',
@@ -589,7 +596,6 @@ module.exports = function(grunt) {
   grunt.registerTask('build_dev', [
     'build_html',
     'build_scripts',
-    'copy:normalize',
     'build_styles',
     'modernizr',
     'copy:bb'

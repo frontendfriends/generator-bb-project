@@ -3,7 +3,8 @@
 var yeoman = require('yeoman-generator'),
 yosay = require('yosay'),
 slug = require('slug'),
-changeCase = require('change-case');
+changeCase = require('change-case'),
+dateFormat = require('dateformat');
 
 var BbProjectGenerator = yeoman.generators.Base.extend({
   initializing: function () {
@@ -93,10 +94,11 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       },
       // @todo Add options to include our prebuilt JS modules
       {
+        type: 'list',
         name: 'openProject',
         message: 'Do you want to open the project after generation?',
         choices: ['yes', 'no'],
-        default: 'yes'
+        default: 'no'
       }
       ];
 
@@ -128,6 +130,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
 
       // Misc details
       self.openProject = (props.openProject === 'yes');
+      self.currentDateTime = dateFormat(new Date(), 'mmmm dS, yyyy, h:MM:ss TT');
       self.currentYear = new Date().getFullYear();
 
       done();
@@ -138,6 +141,7 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   projectMeta: function () {
     var self = this;
 
+    // Copy project meta files over
     self.template('_site.sublime-project', '_<%= projectName %>.sublime-project');
     self.src.copy('editorconfig', '.editorconfig');
     self.template('gitignore', '.gitignore');
@@ -189,22 +193,23 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   package: function () {
     var self = this;
 
+    // Copy Package file over
     // @todo: scaffold package
-
     self.template('_package.json', 'package.json');
   },
 
   gruntfile: function () {
     var self = this;
 
+    // Copy Gruntfile over
     // @todo: scaffold gruntfile
-
     self.src.copy('_Gruntfile.js', 'Gruntfile.js');
   },
 
   directories: function () {
     var self = this;
 
+    // Create empty directories
     self.dest.mkdir('app/src/assets/fonts');
     self.dest.mkdir('app/src/assets/temp');
     self.dest.mkdir('app/src/assets/templates');
@@ -213,12 +218,14 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
   bb: function () {
     var self = this;
 
+    // Copy all BB assets over
     self.directory('assets/_bb/', 'app/src/assets/_bb/');
   },
 
   images: function () {
     var self = this;
 
+    // Copy all existing images over
     self.directory('assets/images/', 'app/src/assets/images/');
   },
 
@@ -231,39 +238,55 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.directory('assets/scripts/', 'app/src/assets/scripts/');
 
     // Create modules for each item from the user defined list
+    // @todo  Invoke sub generator and remove duplication remove duplication ↓
+    // self.invoke(
+    // 'bb-project:script',
+    // {
+    //   options: {
+    //     nested: true,
+    //     newJavaScriptModules: self.newJavaScriptModules
+    //   }
+    // });
     self.newJavaScriptModules.forEach(function (module) {
       self.moduleName = changeCase.camelCase(module);
       self.template('_module.js', 'app/src/assets/scripts/modules/combine/' + module + '.js');
     });
-  },
+},
 
-  styles: function () {
-    var self = this;
+styles: function () {
+  var self = this;
 
-    self.directory('assets/styles/', 'app/src/assets/styles/');
-  },
+  // Copy all existing styles over
+  // @todo Makes styles configurable
+  // @todo Write _order.less dynamically
+  // @todo Rename _order.less dynamically
+  self.directory('assets/styles/', 'app/src/assets/styles/');
+},
 
-  data: function () {
-    var self = this;
+data: function () {
+  var self = this;
 
-    self.directory('data/', 'app/src/data/');
-  },
+  // Copy all existing data files over
+  self.directory('data/', 'app/src/data/');
+},
 
-  helpers: function () {
-    var self = this;
+helpers: function () {
+  var self = this;
 
-    self.directory('helpers/', 'app/src/helpers/');
-  },
+  // Copy all existing helpers over
+  self.directory('helpers/', 'app/src/helpers/');
+},
 
-  layouts: function () {
-    var self = this;
+layouts: function () {
+  var self = this;
 
-    self.directory('layouts/', 'app/src/layouts/');
-  },
+  // Copy all existing layouts over
+  self.directory('layouts/', 'app/src/layouts/');
+},
 
-  pages: function () {
-    var self = this,
-    navigationJson = [];
+pages: function () {
+  var self = this,
+  navigationJson = [];
 
     // Copy all existing pages over
     self.directory('pages/', 'app/src/pages/');
@@ -280,16 +303,18 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         'id': page + '-page'
       });
 
+      // Create new page template
       self.template('_page.hbs', 'app/src/pages/' + self.newPageName + '.hbs');
     });
 
-
+    // Write navigation.json from user input pages
     self.write('app/src/data/navigation.json', JSON.stringify(navigationJson, null, 2));
   },
 
   partials: function () {
     var self = this;
 
+    // Copy all existing partials over
     self.directory('partials/', 'app/src/partials/');
   },
 
@@ -301,16 +326,20 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       callback: function () {
 
         this.log(yosay(
-          'All done! Now running grunt to kick start the project.'
+          'All done! Now running `grunt setup` to kick start the project.'
           ));
 
         // Call grunt to build after dependencies have been installed
-        this.spawnCommand('grunt', ['build_dev', 'build_docs']);
+        this.spawnCommand('grunt', ['setup']);
 
         if (self.openProject) {
           // Open the directory and Sublime project
           this.spawnCommand('open', ['.', '_' + self.projectName + '.sublime-project']);
         }
+
+        // Save .yo-rc.json
+        this.config.save();
+        this.config.set('generated', self.currentDateTime);
       }.bind(this)
     });
   }
