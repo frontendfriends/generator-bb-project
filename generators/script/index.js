@@ -48,31 +48,30 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       ];
 
       this.prompt(prompts, function (props) {
+        // Personal
+        self.yourName = props.yourName;
+        self.yourUrl = props.yourUrl;
 
-      // Personal
-      self.yourName = props.yourName;
-      self.yourUrl = props.yourUrl;
+        // Project
+        self.projectVersion = props.projectVersion;
 
-      // Project
-      self.projectVersion = props.projectVersion;
+        // Project scaffold
+        self.newJavaScriptModules = props.newJavaScriptModules.split(',');
 
-      // Project scaffold
-      self.newJavaScriptModules = props.newJavaScriptModules.split(',');
+        // @todo Add optional subscribe events
 
-      // @todo optional subscribe events
-
-      done();
-    }.bind(this));
+        done();
+      }.bind(this));
     },
 
-  // Scaffold project
+  // Scaffold empty script file
   scripts: function () {
     var self = this;
 
     // Create modules for each item from the user defined list
     self.newJavaScriptModules.forEach(function (module) {
       self.moduleName = changeCase.camelCase(module);
-      self.template('_module.js', 'src/assets/scripts/modules/combine/' + module + '.js');
+      self.template('_module.js', 'src/assets/scripts/modules/combine/' + slug(module) + '.js');
     });
   },
 

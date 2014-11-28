@@ -90,14 +90,18 @@ module.exports = function(grunt) {
         jshintrc: '.jshintrc',
         reporter: require('jshint-stylish')
       },
-      app: [
-        '<%= config.app %>/<%= config.index %>'
+      generatorMain: [
+        '<%= config.generators %>/app/index.js'
+      ],
+      generatorScript: [
+        '<%= config.generators %>/script/index.js'
       ],
       gruntfile: [
         '<%= config.gruntfile %>'
       ]
     },
     mochaTest: {
+      // @todo Add tests for Script sub generator
       test: {
         options: {
           reporter: 'nyan',
@@ -113,8 +117,8 @@ module.exports = function(grunt) {
 
   // Task aliases.
   grunt.registerTask('build_app', [
-    'newer:jshint:app'/*,
-    'newer:mochaTest'*/
+    'newer:jshint',
+    'newer:mochaTest'
   ]);
 
 

@@ -81,18 +81,125 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
         choices: ['yes', 'no'],
         default: 'yes'
       },
-      // Project scaffold details
+      // Package
+      {
+        type: 'checkbox',
+        name: 'npmPackages',
+        message: 'What Grunt plugins would you like to include?',
+        choices: [
+        {
+          name: 'grunt-autoprefixer',
+          value: 'grunt-autoprefixer',
+          checked: true
+        },
+        {
+          name: 'grunt-combine-mq',
+          value: 'grunt-combine-mq',
+          checked: true
+        },
+        {
+          name: 'grunt-contrib-concat',
+          value: 'grunt-contrib-concat',
+          checked: true
+        },
+        {
+          name: 'grunt-contrib-cssmin',
+          value: 'grunt-contrib-cssmin',
+          checked: true
+        },
+        {
+          name: 'grunt-contrib-jshint',
+          value: 'grunt-contrib-jshint',
+          checked: true
+        },
+        {
+          name: 'grunt-contrib-less',
+          value: 'grunt-contrib-less',
+          checked: true
+        },
+        {
+          name: 'grunt-contrib-uglify',
+          value: 'grunt-contrib-uglify',
+          checked: true
+        },
+        {
+          name: 'grunt-dev-update',
+          value: 'grunt-dev-update',
+          checked: true
+          // @todo Set to false when Gruntfile scaffolded dynamically
+        },
+        {
+          name: 'grunt-jscs',
+          value: 'grunt-jscs',
+          checked: true
+          // @todo Set to false when Gruntfile scaffolded dynamically
+        },
+        {
+          name: 'grunt-newer',
+          value: 'grunt-newer',
+          checked: true
+        },
+        {
+          name: 'grunt-notify',
+          value: 'grunt-notify',
+          checked: false
+        },
+        {
+          name: 'grunt-prettify',
+          value: 'grunt-prettify',
+          checked: true
+        },
+        {
+          name: 'grunt-px-to-rem',
+          value: 'grunt-px-to-rem',
+          checked: true
+        },
+        {
+          name: 'grunt-stripmq',
+          value: 'grunt-stripmq',
+          checked: true
+          // @todo Make optional based on IE support user flag
+        },
+        {
+          name: 'grunt-todo',
+          value: 'grunt-todo',
+          checked: true
+          // @todo Set to false when Gruntfile scaffolded dynamically
+        },
+        {
+          name: 'grunt-zip',
+          value: 'grunt-zip',
+          checked: true
+        }
+        ]
+      },
+
+      // Scripts
       {
         name: 'newJavaScriptModules',
         message: 'What empty JavaScript modules would you like created? (comma separate)',
         default: 'global'
       },
+      // @todo Add options to include our prebuilt JS modules
+      // {
+      //   type: 'checkbox',
+      //   name: 'javaScriptModules',
+      //   message: 'What prebuilt JavaScript modules would you like to include?',
+      //   choices: [
+      //   {
+      //     name: 'Menu',
+      //     value: 'includeMenu',
+      //     checked: true
+      //   }
+      //   ]
+      // },
+      // Pages
       {
         name: 'newPages',
         message: 'What empty pages would you like created? (comma separate)',
         default: 'home'
       },
-      // @todo Add options to include our prebuilt JS modules
+      // Open directory and project in Sublime afterwards?
       {
         type: 'list',
         name: 'openProject',
@@ -123,10 +230,19 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       self.componentDir = props.componentDir;
       self.supportLegacy = (props.supportLegacy === 'yes');
       self.useModernizr = (props.useModernizr === 'yes');
+      self.npmPackages = props.npmPackages;
 
       // Project scaffold
       self.newJavaScriptModules = props.newJavaScriptModules.split(',');
       self.newPages = props.newPages.split(',');
+
+      var javaScriptModules = props.javaScriptModules;
+
+      function hasFeature (feat) {
+        return javaScriptModules && javaScriptModules.indexOf(feat) !== -1;
+      }
+
+      self.includeMenu = hasFeature('includeMenu');
 
       // Misc details
       self.openProject = (props.openProject === 'yes');
@@ -173,36 +289,91 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
       'node_modules',
       self.componentDir
       ],
-      dependencies: {}
+      devDependencies: {}
     };
 
     if (self.supportLegacy) {
-      bower.dependencies.jquery = '~1.11.1';
+      bower.devDependencies.jquery = '~1.11.1';
     } else {
-      bower.dependencies.jquery = '~2.1.1';
+      bower.devDependencies.jquery = '~2.1.1';
     }
 
     if (self.useModernizr) {
-      bower.dependencies.modernizr = 'latest';
+      bower.devDependencies.modernizr = 'latest';
     }
 
     self.write('.bowerrc', JSON.stringify(bowerrc, null, 2));
     self.write('bower.json', JSON.stringify(bower, null, 2));
   },
 
+  // @todo Move package file scaffolding to sub generator
   package: function () {
     var self = this;
 
     // Copy Package file over
-    // @todo: scaffold package
-    self.template('_package.json', 'package.json');
+    // @todo scaffold package
+    // self.template('_package.json', 'package.json');
+
+    // npmPackages
+    var packageJson = {
+      'name': self.projectName,
+      'version': self.projectVersion,
+      'private': true,
+      'title': self.projectName,
+      'description': self.projectName,
+      'homepage': self.gitRepository,
+      'author': {
+        'name': self.yourName,
+        'email': self.yourEmail,
+        'url': self.yourUrl
+      },
+      'contributors': [],
+      'repository': {
+        'type': 'git',
+        'url': self.gitRepository
+      },
+      'issues': self.gitRepository +'/issues',
+      'dependencies': {},
+      'devDependencies': {
+        // Mandatory packages
+        'assemble': '^0.4.41',
+        'bower': '^1.3.9',
+        'grunt': '^0.4.x',
+        'grunt-cli': '~0.1.13',
+        'grunt-contrib-clean': '^0.6.0',
+        'grunt-contrib-connect': '~0.8.0',
+        'grunt-contrib-copy': '^0.6.0',
+        'grunt-contrib-watch': '^0.6.1',
+        'load-grunt-tasks': '^0.6.0',
+        'time-grunt': '^1.0.0'
+      },
+      'scripts': {
+        'test': 'grunt deploy'
+      }
+    };
+
+    // Write optional packages to package.json
+    if (self.useModernizr) {
+      packageJson.devDependencies['grunt-modernizr'] = '0.6.0';
+    }
+
+    self.npmPackages.forEach(function (packageName) {
+      packageJson.devDependencies[packageName] = 'latest';
+
+      // If JSHint, include stylish too :D
+      if (packageName === 'grunt-contrib-jshint') {
+        packageJson.devDependencies['jshint-stylish'] = '1.0.0';
+      }
+    });
+
+    self.write('package.json', JSON.stringify(packageJson, null, 2));
   },
 
   gruntfile: function () {
     var self = this;
 
     // Copy Gruntfile over
-    // @todo: scaffold gruntfile
+    // @todo Scaffold Gruntfile dynamically, then move to a sub generator
     self.src.copy('_Gruntfile.js', 'Gruntfile.js');
   },
 
@@ -235,58 +406,58 @@ var BbProjectGenerator = yeoman.generators.Base.extend({
     self.src.copy('jscsrc', '.jscsrc');
     self.template('jsdoc.conf.json', '.jsdoc.conf.json');
     self.src.copy('jshintrc', '.jshintrc');
+    // Copy all existing scripts over
+    // @todo Phase this out, define mandatory scripts and use optionally selected modules too ↓
     self.directory('assets/scripts/', 'app/src/assets/scripts/');
+
+    // Include custom menu module if required
+    // @todo Include this when the above is completed
+    // if (self.includeMenu) {
+    //   self.src.copy('assets/scripts/modules/combine/menu.js', 'app/src/assets/scripts/modules/combine/menu.js');
+    // }
 
     // Create modules for each item from the user defined list
     // @todo  Invoke sub generator and remove duplication remove duplication ↓
-    // self.invoke(
-    // 'bb-project:script',
-    // {
-    //   options: {
-    //     nested: true,
-    //     newJavaScriptModules: self.newJavaScriptModules
-    //   }
-    // });
     self.newJavaScriptModules.forEach(function (module) {
       self.moduleName = changeCase.camelCase(module);
-      self.template('_module.js', 'app/src/assets/scripts/modules/combine/' + module + '.js');
+      self.template('_module.js', 'app/src/assets/scripts/modules/combine/' + slug(module) + '.js');
     });
-},
+  },
 
-styles: function () {
-  var self = this;
+  styles: function () {
+    var self = this;
 
-  // Copy all existing styles over
-  // @todo Makes styles configurable
-  // @todo Write _order.less dynamically
-  // @todo Rename _order.less dynamically
-  self.directory('assets/styles/', 'app/src/assets/styles/');
-},
+    // Copy all existing styles over
+    // @todo Makes styles configurable
+    // @todo Write _order.less dynamically
+    // @todo Rename _order.less dynamically
+    self.directory('assets/styles/', 'app/src/assets/styles/');
+  },
 
-data: function () {
-  var self = this;
+  data: function () {
+    var self = this;
 
-  // Copy all existing data files over
-  self.directory('data/', 'app/src/data/');
-},
+    // Copy all existing data files over
+    self.directory('data/', 'app/src/data/');
+  },
 
-helpers: function () {
-  var self = this;
+  helpers: function () {
+    var self = this;
 
-  // Copy all existing helpers over
-  self.directory('helpers/', 'app/src/helpers/');
-},
+    // Copy all existing helpers over
+    self.directory('helpers/', 'app/src/helpers/');
+  },
 
-layouts: function () {
-  var self = this;
+  layouts: function () {
+    var self = this;
 
-  // Copy all existing layouts over
-  self.directory('layouts/', 'app/src/layouts/');
-},
+    // Copy all existing layouts over
+    self.directory('layouts/', 'app/src/layouts/');
+  },
 
-pages: function () {
-  var self = this,
-  navigationJson = [];
+  pages: function () {
+    var self = this,
+    navigationJson = [];
 
     // Copy all existing pages over
     self.directory('pages/', 'app/src/pages/');
@@ -337,7 +508,7 @@ pages: function () {
           this.spawnCommand('open', ['.', '_' + self.projectName + '.sublime-project']);
         }
 
-        // Save .yo-rc.json
+        // Save yo-rc
         this.config.save();
         this.config.set('generated', self.currentDateTime);
       }.bind(this)
